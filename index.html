@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosso Momento Especial</title>
+    <style>
+        :root {
+            --romance: #ff4d6d;
+            --suave: #fff0f3;
+            --texto: #590d22;
+            --card-back: #ffccd5;
+            --checklist-bg: #ffffff;
+            --detalhe: #ff85a1;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--suave);
+            color: var(--texto);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        /* Corações Caindo */
+        .heart {
+            position: fixed;
+            top: -10px;
+            color: var(--romance);
+            font-size: 20px;
+            user-select: none;
+            z-index: 1000;
+            pointer-events: none;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(105vh) rotate(360deg); }
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px 10px 20px;
+            z-index: 2;
+        }
+
+        header h1 { font-size: 1.4rem; margin-bottom: 5px; color: var(--romance); }
+        header p { font-size: 0.9rem; margin-top: 0; opacity: 0.8; }
+
+        /* Dedicatória */
+        .dedicatoria {
+            width: 85%;
+            max-width: 350px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 20px;
+            border-left: 5px solid var(--romance);
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.1);
+            margin-bottom: 25px;
+            box-sizing: border-box;
+        }
+
+        .dedicatoria p {
+            font-family: 'Georgia', serif;
+            font-style: italic;
+            line-height: 1.6;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        /* SEÇÃO DE MÚSICA */
+        .spotify-section {
+            width: 85%;
+            max-width: 350px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .spotify-label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--romance);
+            margin-bottom: 8px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .spotify-container {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            background: #000;
+            line-height: 0;
+        }
+
+        /* MURAL DE CARTÕES POSTAIS */
+        .mural-postais {
+            width: 90%;
+            max-width: 400px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .grid-postais {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .postal {
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: 0.3s;
+            border: 1px solid #eee;
+        }
+
+        .postal:hover { transform: translateY(-5px); }
+        .postal i { display: block; font-size: 24px; margin-bottom: 5px; }
+        .postal-titulo { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: var(--romance); }
+
+        /* Overlay para ler a carta */
+        .overlay-carta {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(89, 13, 34, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .carta-aberta {
+            background: #fff9fa;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 300px;
+            width: 100%;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .btn-fechar {
+            position: absolute;
+            top: 10px; right: 10px;
+            background: none; border: none; font-size: 20px; cursor: pointer; color: var(--romance);
+        }
+
+        /* Contador */
+        .contador-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(255, 77, 109, 0.15);
+            text-align: center;
+            width: 85%;
+            max-width: 350px;
+            margin-bottom: 30px;
+        }
+
+        .timer { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+        .timer-unit span { display: block; font-weight: bold; color: var(--romance); font-size: 1.3rem; }
+        .label { font-size: 0.65rem; text-transform: uppercase; opacity: 0.7; }
+
+        /* Gerador de Carinho */
+        .motivos-container {
+            background: white; width: 85%; max-width: 350px; padding: 20px;
+            border-radius: 25px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            margin-bottom: 30px; box-sizing: border-box;
+        }
+
+        #btn-motivo {
+            background: var(--romance); color: white; border: none; padding: 12px;
+            border-radius: 50px; font-weight: bold; cursor: pointer; width: 100%;
+        }
+
+        #texto-motivo { font-size: 0.9rem; font-style: italic; min-height: 40px; margin-top: 10px; }
+
+        /* Surpresas e Checklist */
+        .grid-surpresas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 90%; max-width: 450px; margin-bottom: 30px; }
+        .card-clicavel { background: var(--card-back); min-height: 90px; border-radius: 15px; display: flex; align-items: center; justify-content: center; cursor: pointer; text-align: center; padding: 5px; box-sizing: border-box; }
+        .card-clicavel.revelado { background: white; border: 2px solid var(--romance); }
+        .texto-revelado { display: none; font-weight: bold; font-size: 0.75rem; }
+        .revelado .icon-hidden { display: none; }
+        .revelado .texto-revelado { display: block; animation: fadeIn 0.5s; }
+
+        .checklist-container { background: white; width: 85%; max-width: 350px; padding: 20px; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 40px; }
+        .check-item { display: flex; align-items: center; margin: 10px 0; cursor: pointer; }
+        .checkbox-custom { width: 18px; height: 18px; border: 2px solid var(--romance); border-radius: 5px; margin-right: 12px; display: flex; align-items: center; justify-content: center; }
+        .check-item.active .checkbox-custom { background: var(--romance); }
+        .check-item.active .checkbox-custom::after { content: '✓'; color: white; font-size: 10px; }
+        .check-item.active span { text-decoration: line-through; opacity: 0.5; }
+
+        .foto-do-dia-container { width: 85%; max-width: 300px; text-align: center; margin-bottom: 50px; }
+        .stack-fotos { position: relative; width: 100%; aspect-ratio: 1/1.1; margin-bottom: 20px; }
+        .moldura-foto { background: white; padding: 8px; border-radius: 10px; box-shadow: 0 8px 15px rgba(0,0,0,0.1); position: absolute; width: 100%; height: 100%; box-sizing: border-box; }
+        .moldura-foto img { width: 100%; height: 100%; object-fit: cover; border-radius: 5px; }
+        .foto-atras-1 { z-index: 1; transform: rotate(-6deg) scale(0.92); opacity: 0.6; }
+        .foto-atras-2 { z-index: 2; transform: rotate(4deg) scale(0.96); opacity: 0.8; }
+        .foto-principal { z-index: 3; transform: rotate(-1deg); }
+        .legenda-foto { font-family: 'Georgia', serif; font-size: 1.1rem; color: var(--romance); font-weight: bold; text-align: center; margin-bottom: 10px;}
+
+        /* --- ESTILO DA JARRA BAGUNÇADA --- */
+        .jarra-wrapper {
+            text-align: center;
+            margin-bottom: 40px;
+            width: 85%;
+        }
+        .jarra {
+            width: 140px;
+            height: 180px;
+            border: 4px solid #fff;
+            border-top: none;
+            border-radius: 10px 10px 50px 50px;
+            position: relative;
+            margin: 0 auto 15px;
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: inset 0 0 15px rgba(255, 77, 109, 0.1);
+            overflow: hidden;
+        }
+        .jarra::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 90px; height: 10px;
+            background: #fff;
+            border-radius: 0 0 8px 8px;
+        }
+        .coracao-jarra {
+            position: absolute;
+            font-size: 16px;
+            pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #btn-jarra {
+            background: var(--romance); color: white; border: none; padding: 12px 25px;
+            border-radius: 50px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 77, 109, 0.2);
+        }
+
+        /* ESTILO DO BOTÃO O QUE ACHOU */
+        .feedback-container {
+            width: 85%;
+            max-width: 350px;
+            text-align: center;
+            margin: 20px 0 40px 0;
+        }
+
+        #btn-feedback {
+            background: var(--romance);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
+            transition: transform 0.2s;
+        }
+
+        #btn-feedback:active { transform: scale(0.9); }
+
+        footer { padding: 20px; opacity: 0.6; font-size: 0.7rem; text-align: center; }
+        @keyframes fadeIn { from { opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Para Minha Amoreca ❤️</h1>
+        <p>Um pequeno site para o nosso grande amor</p>
+    </header>
+
+    <div class="dedicatoria">
+        <p>"Obrigado por ser meu porto seguro e por transformar cada dia comum em algo extraordinário. Eu te amo infinitamente."</p>
+    </div>
+
+    <div class="spotify-section">
+        <span class="spotify-label">Sua música favorita 🎵</span>
+        <div class="spotify-container">
+            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/2sV11xuq4U8KlGWKCtGNpx?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+
+        <span class="spotify-label">A que me lembra você ✨</span>
+        <div class="spotify-container">
+           <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/2262bWmqomIaJXwCRHr13j?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+    </div>
+
+    <div class="mural-postais">
+        <h3 style="color: var(--romance); font-size: 1rem; margin-bottom: 5px;">Mural de Cartinhas ✉️</h3>
+        <p style="font-size: 0.8rem; opacity: 0.7; margin: 0;">Abra de acordo com o que estiver sentindo</p>
+        <div class="grid-postais">
+            <div class="postal" onclick="abrirCartaAleatoria('triste')"><i>😢</i><div class="postal-titulo">Se quiser desistir</div></div>
+            <div class="postal" onclick="abrirCartaAleatoria('saudade')"><i>🫂</i><div class="postal-titulo">Com saudades</div></div>
+            <div class="postal" onclick="abrirCartaAleatoria('estressada')"><i>🤯</i><div class="postal-titulo">Se estiver brava</div></div>
+            <div class="postal" onclick="abrirCartaAleatoria('amor')"><i>💖</i><div class="postal-titulo">Querendo mimos</div></div>
+        </div>
+    </div>
+
+    <div class="overlay-carta" id="overlayCarta" onclick="fecharCarta()">
+        <div class="carta-aberta" onclick="event.stopPropagation()">
+            <button class="btn-fechar" onclick="fecharCarta()">×</button>
+            <p id="textoCarta" style="font-family: 'Georgia', serif; font-style: italic; line-height: 1.6; color: #590d22;"></p>
+        </div>
+    </div>
+
+    <div class="contador-card">
+        <h2 style="font-size: 0.8rem; margin-bottom: 10px; color: var(--detalhe);">Juntos há exatamente:</h2>
+        <div class="timer">
+            <div class="timer-unit"><span id="d">0</span><div class="label">Dias</div></div>
+            <div class="timer-unit"><span id="h">0</span><div class="label">Horas</div></div>
+            <div class="timer-unit"><span id="m">0</span><div class="label">Min</div></div>
+            <div class="timer-unit"><span id="s">0</span><div class="label">Seg</div></div>
+        </div>
+    </div>
+
+    <div class="motivos-container">
+        <button id="btn-motivo" onclick="gerarMotivo()">Clique para um carinho ❤️</button>
+        <div id="texto-motivo">Você é a luz dos meus dias!</div>
+    </div>
+
+    <div class="legenda-foto" style="margin-bottom: 10px;">Refresh na página para ver novas surpresas</div>
+
+    <div class="grid-surpresas">
+        <div class="card-clicavel" onclick="revelar(this)"><span class="icon-hidden">1️⃣</span><span class="texto-revelado"></span></div>
+        <div class="card-clicavel" onclick="revelar(this)"><span class="icon-hidden">2️⃣</span><span class="texto-revelado"></span></div>
+        <div class="card-clicavel" onclick="revelar(this)"><span class="icon-hidden">3️⃣</span><span class="texto-revelado"></span></div>
+    </div>
+
+    <div class="checklist-container">
+        <h3 style="text-align: center; color: var(--romance); margin-top: 0; font-size: 1rem;">✅ Checklist Diário</h3>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="checkbox-custom"></div><span>Dizer eu te amo</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="checkbox-custom"></div><span>Dar bom dia</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="checkbox-custom"></div><span>Passar tempo comigo</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="checkbox-custom"></div><span>Responder meus Reels</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="checkbox-custom"></div><span>Falar que ta com saudades</span></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="checkbox-custom"></div><span>Assistir Girls In The House</span></div>
+    </div>
+    
+    <div class="foto-do-dia-container">
+        <div class="stack-fotos">
+            <div class="moldura-foto foto-atras-1"><img class="fotoAleatoria" src="" alt="Fundo"></div>
+            <div class="moldura-foto foto-atras-2"><img class="fotoAleatoria" src="" alt="Fundo"></div>
+            <div class="moldura-foto foto-principal"><img class="fotoAleatoria" src="" alt="Principal"></div>
+        </div>
+        <div class="legenda-foto">Essa é a mulher que eu amo</div>
+    </div>
+
+    <div class="jarra-wrapper">
+        <div class="jarra" id="jarraAmor"></div>
+        <button id="btn-jarra" onclick="adicionarCoracaoJarra()">Encha a jarra de amor 💖</button>
+    </div>
+
+    <div class="feedback-container">
+        <button id="btn-feedback" onclick="acaoFeedback()">O que achou? ❤️</button>
+    </div>
+
+    <footer>Criado com muito amor</footer>
+
+    <script>
+        const dataInicio = new Date(2026, 1, 15, 0, 9, 0); 
+
+        function atualizar() {
+            const agora = new Date();
+            const diff = agora - dataInicio;
+            document.getElementById('d').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
+            document.getElementById('h').innerText = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            document.getElementById('m').innerText = Math.floor((diff / 1000 / 60) % 60);
+            document.getElementById('s').innerText = Math.floor((diff / 1000) % 60);
+        }
+        setInterval(atualizar, 1000);
+        atualizar();
+
+        const bancoDeCartas = {
+            triste: [
+                "Sei que as coisas não estão fáceis, meu amor. As vezes só queremos que tudo acabe logo para que não tenhamos que sentir isso novamente, eu te entendo totalmente. Queria estar ao seu lado para poder te abraçar e prometer que tudo vai dar certo, mas garanto que desistir não é uma opção, confie em você mesma assim como eu confio, sei que você é capaz de superar o que está passando.",
+                "Sei que as coisas não estão fáceis, amoreca. Às vezes o cansaço ganha, mas lembre-se que você não está sozinha nessa. Eu sou seu porto seguro e vou te segurar toda vez que você sentir que vai cair. Confie em você como eu confio.",
+                "Não deixe a tristeza de hoje apagar a mulher incrível que você é. Você já superou tanto, e essa é só mais uma fase. Estou aqui segurando sua mão, mesmo que de longe."
+            ],
+            saudade: [
+                "A distância é só um detalhe quando o amor é gigante. Fecha os olhos por um segundo e imagine uma vida comigo. Logo, logo a gente vai estar juntinho, eu prometo.",
+                "Contando cada segundo para ter uma vida com você. O mundo fica sem cor quando não estou com você. Eu te amo e sinto sua falta em cada batida do meu coração.",
+                "A saudade aperta, mas ela é a prova do quanto eu te amo. Mal posso esperar pra te ver."
+            ],
+            estressada: [
+                "Calma meu amor, tira um tempinho pra você, toma uma água, respira. Não deixa nada tirar sua paz. Estou aqui para ouvir o que tem a dizer, tá bom?",
+                "Ei, relaxa. Sei que o dia foi corrido e estressante, mas agora está tudo bem.",
+                "Não deixa o estresse do mundo estragar o seu brilho. Respira fundo, coloca uma música que você gosta e lembra que eu estou aqui do seu lado pra tudo."
+            ],
+            amor: [
+                "Você é a pessoa mais especial da minha vida. Cada detalhe seu me encanta. Obrigado por me escolher todos os dias. Você merece o mundo, e eu vou tentar te dar ele.",
+                "Às vezes eu me pego sorrindo sozinho só de pensar em você. Você é o meu sonho que virou realidade.",
+                "Daria o mundo só pra te ver sorrir agora. Você é a minha maior inspiração e o grande amor da minha vida."
+            ]
+        };
+
+        function abrirCartaAleatoria(categoria) {
+            const opcoes = bancoDeCartas[categoria];
+            const sorteio = opcoes[Math.floor(Math.random() * opcoes.length)];
+            document.getElementById('textoCarta').innerText = sorteio;
+            document.getElementById('overlayCarta').style.display = 'flex';
+        }
+
+        function fecharCarta() {
+            document.getElementById('overlayCarta').style.display = 'none';
+        }
+
+        function gerarMotivo() {
+            const motivos = ["Amo o jeito que você cuida de mim.", "Você é meu melhor presente.", "Amo nossa conexão.", "Você é linda por dentro e por fora.", "Amo o seu senso de humor.", "Você me faz ser uma pessoa melhor."];
+            const txt = document.getElementById('texto-motivo');
+            txt.innerText = motivos[Math.floor(Math.random()*motivos.length)];
+        }
+
+        const frasesCards = [
+            "A melhor parte do dia de hoje foi poder me apaixonar por você novamente.",
+            "Cada segundo com você é uma memória que levarei para a vida toda.",
+            "Eu amo o jeito que você demonstra amar.",
+            "Você é o meu lugar seguro.",
+            "Obrigado por ser essa pessoa maravilhosa.",
+            "Nosso amor é minha maior conquista.",
+            "Mal posso esperar pelo nosso futuro.",
+            "Você é a melhor parte do meu dia.",
+            "Eu escolheria você mil vezes.",
+            "A vida fica mais leve ao seu lado.",
+            "Amo assistir séries e filmes com você.",
+            "Amo cada detalhe em você.",
+            "Amo assistir Girls in the house com você",
+            "Você é tudo que eu quero",
+            "Você é a minha inspiração",
+            "Você é uma mulher muito forte",
+            "Obrigado por não desistir amoreca", 
+            "Quero passar minha vida ao seu lado",
+            "Você me faz o homem mais feliz do mundo",
+            "Todo dia eu descubro uma maneira nova de te amar mais ainda",
+            "Eu te amo desde o primeiro 'oi'",
+            "Você é um sonho que eu sempre quis ter",
+            "Adoro seu humor esquisito",
+            "Eu penso em você 24 horas por dia",
+            "Prometo te fazer a mulher mais feliz do mundo",
+            "Eu amo ser amado por você",
+            "Quando estou com você, o tempo passa voando"
+        ].sort(() => Math.random() - 0.5);
+        
+        document.querySelectorAll('.texto-revelado').forEach((c, i) => c.innerText = frasesCards[i]);
+
+        function revelar(el) { if(!el.classList.contains('revelado')){ el.classList.add('revelado'); criarCoracao(); } }
+        function toggleCheck(el) { el.classList.toggle('active'); }
+
+        const fotosDoDia = ["1.jpeg", "2.jpeg", "3.jpeg", "4.webp", "5.png", "6.webp"];
+        document.querySelectorAll('.fotoAleatoria').forEach(img => { img.src = fotosDoDia[Math.floor(Math.random()*fotosDoDia.length)]; });
+
+        function criarCoracao() {
+            const h = document.createElement("div");
+            h.classList.add("heart");
+            h.innerHTML = "❤️";
+            h.style.left = Math.random() * 100 + "vw";
+            h.style.animationDuration = "4s";
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 4000);
+        }
+        setInterval(criarCoracao, 1500);
+
+        // --- LÓGICA DA JARRA BAGUNÇADA ---
+        let totalCoracoesJarra = 0;
+        function adicionarCoracaoJarra() {
+            if(totalCoracoesJarra >= 100) return; // Limite para não travar o navegador
+            
+            const jarra = document.getElementById('jarraAmor');
+            const coracao = document.createElement('div');
+            coracao.classList.add('coracao-jarra');
+            coracao.innerHTML = "❤️";
+            
+            // Posição horizontal aleatória (bagunçado)
+            const posX = Math.random() * 110 + 5; 
+            // Rotação aleatória (bagunçado)
+            const rotacao = Math.random() * 360;
+            // Altura baseada na quantidade (empilhando)
+            const posY = Math.floor(totalCoracoesJarra / 6) * 8;
+
+            coracao.style.left = posX + 'px';
+            coracao.style.bottom = '-50px'; // Começa fora para o efeito de cair
+            coracao.style.transform = `rotate(${rotacao}deg)`;
+            
+            jarra.appendChild(coracao);
+            
+            // Timeout para animar a queda
+            setTimeout(() => {
+                coracao.style.bottom = posY + 'px';
+            }, 50);
+
+            totalCoracoesJarra++;
+        }
+
+        // FUNÇÃO DO BOTÃO FINAL
+        function acaoFeedback() {
+            // Adiciona corações extras
+            for(let i=0; i<10; i++) {
+                setTimeout(criarCoracao, i * 150);
+            }
+            // Abre a cartinha de agradecimento
+            document.getElementById('textoCarta').innerText = "Eu fiz esse cantinho especial para você saber que, não importa o dia, você sempre terá um lugar para se sentir amada. Você é o amor da minha vida! ❤️";
+            document.getElementById('overlayCarta').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
